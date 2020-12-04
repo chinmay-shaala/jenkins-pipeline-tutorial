@@ -11,6 +11,7 @@ pipeline {
 		task_def_arn = ""
         cluster = ""
         exec_role_arn = ""
+        repo_name = "sample-app"
     }
     
     // Here you can define one or more stages for your pipeline.
@@ -25,7 +26,9 @@ pipeline {
                 // Get Docker login credentials for ECR
                 sh "aws ecr get-login --no-include-email --region ${region} | sh"
                 // Build the Docker image
-                sh "docker build -t ${docker_repo_uri}:${commit_id} ."
+                sh "docker build -t ${repo_name} ."
+                // Docker Tag
+                sh "docker tag ${repo_name}:latest ${docker_repo_uri}:${commit_id}"
                 // Push Docker image
                 sh "docker push ${docker_repo_uri}:${commit_id}"
                 // Clean up
